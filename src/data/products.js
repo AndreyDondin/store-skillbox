@@ -2,7 +2,7 @@ export default [
   {
     id: 1,
     categoriesId: 2,
-    colorId: 6,
+    colorId: [1, 6],
     title: 'Бесконтактный термометр',
     price: 1000,
     img: 'img/thermometer.jpg',
@@ -10,7 +10,7 @@ export default [
   {
     id: 2,
     categoriesId: 4,
-    colorId: 7,
+    colorId: [3, 7],
     title: 'Умная колонка «Капсула»',
     price: 3500,
     img: 'img/smart-speaker.jpg',
@@ -18,7 +18,7 @@ export default [
   {
     id: 3,
     categoriesId: 5,
-    colorId: 3,
+    colorId: [3, 7],
     title: 'Электросамокат',
     price: 7100,
     img: 'img/electro-scooter.jpg',
@@ -26,7 +26,7 @@ export default [
   {
     id: 4,
     categoriesId: 4,
-    colorId: 7,
+    colorId: [7],
     title: 'Универсальный радар-детектор',
     price: 10720,
     img: 'img/radar-detector.jpg',
@@ -34,7 +34,7 @@ export default [
   {
     id: 5,
     categoriesId: 1,
-    colorId: 6,
+    colorId: [6],
     title: 'Умное сиденье для унитаза',
     price: 5400,
     img: 'img/toilet-seat.jpg',
@@ -42,7 +42,7 @@ export default [
   {
     id: 6,
     categoriesId: 1,
-    colorId: 3,
+    colorId: [3, 7],
     title: 'Погружной блендер',
     price: 3800,
     img: 'img/blender.jpg',
@@ -50,7 +50,7 @@ export default [
   {
     id: 7,
     categoriesId: 4,
-    colorId: 7,
+    colorId: [5, 7],
     title: 'Экшн-камера GoPro',
     price: 29440,
     img: 'img/gopro.jpg',
@@ -58,7 +58,7 @@ export default [
   {
     id: 8,
     categoriesId: 4,
-    colorId: 1,
+    colorId: [1, 5, 7],
     title: 'Смарт-часы',
     price: 6500,
     img: 'img/smart-watch.jpg',
@@ -66,7 +66,7 @@ export default [
   {
     id: 9,
     categoriesId: 3,
-    colorId: 3,
+    colorId: [3, 4],
     title: 'Многофункциональный рюкзак',
     price: 4990,
     img: 'img/backpack.jpg',
@@ -74,7 +74,7 @@ export default [
   {
     id: 10,
     categoriesId: 1,
-    colorId: 1,
+    colorId: [1],
     title: '«Морской» проектор',
     price: 17000,
     img: 'img/projector.jpg',
@@ -82,7 +82,7 @@ export default [
   {
     id: 11,
     categoriesId: 3,
-    colorId: 4,
+    colorId: [4, 6],
     title: 'Магнитные шнурки',
     price: 700,
     img: 'img/laces.jpg',
@@ -90,7 +90,7 @@ export default [
   {
     id: 12,
     categoriesId: 2,
-    colorId: 6,
+    colorId: [6, 7],
     title: 'Электромассажер для шеи',
     price: 6100,
     img: 'img/massager.jpg',
