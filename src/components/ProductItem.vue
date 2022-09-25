@@ -2,7 +2,8 @@
 
 <template>
   <li class="catalog__item">
-    <a class="catalog__pic" href="#">
+    <a class="catalog__pic" href="#"
+    @click.prevent="goToPage('product',{id:product.id})">
       <img :src="product.img" srcset="img/radio@2x.jpg 2x" :alt="product.title" />
     </a>
 
@@ -10,7 +11,7 @@
       <a href="#"> {{ product.title }} </a>
     </h3>
 
-    <span class="catalog__price"> {{ product.price }} ₽ </span>
+    <span class="catalog__price"> {{product.price | formatNumber}} ₽ </span>
 
     <ul class="colors colors--black">
       <li class="colors__item" v-for="color in product.colorId" :key="color">
@@ -30,6 +31,8 @@
 
 <script>
 import colors from '@/data/colors';
+import goToPage from '@/helpers/goToPage';
+import formatNumber from '@/helpers/formatNumber';
 
 export default {
   props: ['product'],
@@ -40,6 +43,12 @@ export default {
     colors() {
       return colors;
     },
+  },
+  methods: {
+    goToPage,
+  },
+  filters: {
+    formatNumber,
   },
 };
 </script>
