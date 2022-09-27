@@ -1,18 +1,19 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
-<!-- eslint-disable max-len -->
 <template>
   <main class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="goToPage('main')"> Каталог </a>
+          <router-link class="breadcrumbs__link" :to="{ name: 'main' }"> Каталог </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="goToPage('main')"> {{category.title}} </a>
+          <router-link class="breadcrumbs__link" :to="{ name: 'main' }">
+            {{ category.title }}
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link"> {{product.title}} </a>
+          <a class="breadcrumbs__link"> {{ product.title }} </a>
         </li>
       </ul>
     </div>
@@ -20,57 +21,34 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img
-            width="570"
-            height="570"
-            :src="product.img"
-            :alt="product.title"
-          />
+          <img width="570" height="570" :src="product.img" :alt="product.title" />
         </div>
       </div>
 
       <div class="item__info">
-        <span class="item__code">Артикул: {{product.id}}</span>
-        <h2 class="item__title">{{product.title}}</h2>
+        <span class="item__code">Артикул: {{ product.id }}</span>
+        <h2 class="item__title">{{ product.title }}</h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
-            <b class="item__price"> {{product.price | formatNumber}} ₽ </b>
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
+            <b class="item__price"> {{ product.price | formatNumber }} ₽ </b>
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
               <ul class="colors">
-                <li class="colors__item">
+                <li class="colors__item" v-for="color in product.colorId" :key="color">
                   <label class="colors__label">
                     <input
                       class="colors__radio sr-only"
                       type="radio"
                       name="color-item"
-                      value="blue"
-                      checked=""
+                      :value="color"
                     />
-                    <span class="colors__value" style="background-color: #73b6ea"> </span>
+                    <span
+                      class="colors__value"
+                      :style="{ 'background-color': colors[+color - 1].color }"
+                    >
+                    </span>
                   </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input
-                      class="colors__radio sr-only"
-                      type="radio"
-                      name="color-item"
-                      value="yellow"
-                    />
-                    <span class="colors__value" style="background-color: #ffbe15"> </span>
-                  </label>
-                </li>
-                <li class="colors__item">
-                  <label class="colors__label">
-                    <input
-                      class="colors__radio sr-only"
-                      type="radio"
-                      name="color-item"
-                      value="gray" />
-                    <span class="colors__value" style="background-color: #939393"> </span
-                  ></label>
                 </li>
               </ul>
             </fieldset>
@@ -108,15 +86,23 @@
 
             <div class="item__row">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+                <button
+                  type="button"
+                  aria-label="Убрать один товар"
+                  @click="decrementProductAmount"
+                >
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count" />
+                <input type="text" v-model.number="productAmount" />
 
-                <button type="button" aria-label="Добавить один товар">
+                <button
+                  type="button"
+                  aria-label="Добавить один товар"
+                  @click="incrementProductAmount"
+                >
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>
@@ -188,24 +174,43 @@
 <script>
 import products from '@/data/products';
 import categories from '@/data/categories';
-import goToPage from '@/helpers/goToPage';
 import formatNumber from '@/helpers/formatNumber';
+import colors from '@/data/colors';
 
 export default {
-  props: ['pageParams'],
+  data() {
+    return { productAmount: 1, color: '#73B6EA' };
+  },
   computed: {
+    colors() {
+      return colors;
+    },
     product() {
-      return products.find((product) => product.id === this.pageParams.id);
+      return products.find((product) => product.id === +this.$route.params.id);
     },
     category() {
       return categories.find((category) => category.id === this.product.categoriesId);
     },
   },
-  methods: {
-    goToPage,
-  },
   filters: {
     formatNumber,
+  },
+  methods: {
+    addToCart() {
+      this.$store.commit('addToCartProducts', {
+        productId: this.product.id,
+        amount: this.productAmount,
+      });
+    },
+    incrementProductAmount() {
+      this.productAmount += 1;
+    },
+    decrementProductAmount() {
+      if (this.productAmount === 1) {
+        return;
+      }
+      this.productAmount -= 1;
+    },
   },
 };
 </script>

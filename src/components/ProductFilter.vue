@@ -41,7 +41,7 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <ul class="colors" >
+        <ul class="colors">
           <li class="colors__item" v-for="color in colors" :key="color.id">
             <label class="colors__label">
               <input
@@ -51,7 +51,7 @@
                 :value="color.id"
                 v-model.number="currentColorId"
               />
-              <span class="colors__value" :style="{'background-color':color.color}"> </span>
+              <span class="colors__value" :style="{ 'background-color': color.color }"> </span>
             </label>
           </li>
         </ul>
@@ -124,8 +124,9 @@
       </fieldset>
 
       <button class="filter__submit button button--primery" type="submit">Применить</button>
-      <button class="filter__reset button button--second" type="button"
-      @click="resetFilter">Сбросить</button>
+      <button class="filter__reset button button--second" type="button" @click="resetFilter">
+        Сбросить
+      </button>
     </form>
   </aside>
 </template>
@@ -133,9 +134,10 @@
 <script>
 import categories from '@/data/categories';
 import colors from '@/data/colors';
+import products from '@/data/products';
 
 export default {
-  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId', 'dd'],
   data() {
     return {
       currentPriceFrom: 0,
@@ -178,6 +180,14 @@ export default {
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
+    },
+    maxPrice() {
+      const prices = products.map((prod) => prod.price);
+      return Math.max(...prices);
+    },
+    minPrice() {
+      const prices = products.map((prod) => prod.price);
+      return Math.min(...prices);
     },
   },
 };

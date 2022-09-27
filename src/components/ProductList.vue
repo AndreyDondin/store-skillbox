@@ -1,6 +1,6 @@
 <template>
   <ul class="catalog__list">
-    <ProductItem :product="product" v-for="product in products" :key="product.id" />
+    <ProductItem v-for="product in products" :key="product.id" :product="product" />
   </ul>
 </template>
 
@@ -9,7 +9,6 @@ import ProductItem from './ProductItem.vue';
 
 export default {
   props: ['products'],
-  comments: { ProductItem },
   components: { ProductItem },
 };
 </script>

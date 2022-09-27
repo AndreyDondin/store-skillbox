@@ -44,7 +44,7 @@ export default {
 
       if (this.filterPriceFrom > 0) {
         filteredProducts = filteredProducts.filter(
-          (product) => product.price > this.filterPriceFrom,
+          (product) => product.price > this.filterPriceFrom
         );
       }
 
@@ -54,13 +54,13 @@ export default {
 
       if (this.filterCategoryId > 0) {
         filteredProducts = filteredProducts.filter(
-          (product) => product.categoriesId === this.filterCategoryId,
+          (product) => product.categoriesId === this.filterCategoryId
         );
       }
 
       if (this.filterColorId > 0) {
-        filteredProducts = filteredProducts.filter(
-          (product) => product.colorId.includes(this.filterColorId),
+        filteredProducts = filteredProducts.filter((product) =>
+          product.colorId.includes(this.filterColorId)
         );
       }
 
