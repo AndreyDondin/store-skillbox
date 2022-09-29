@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
-  <aside class="filter">
+  <aside class="filter" v-if="productData">
     <h2 class="filter__title">Фильтры</h2>
 
     <form class="filter__form form" action="#" method="get" @submit.prevent="submitFilter">
@@ -11,13 +11,20 @@
           <input
             class="form__input"
             type="text"
+            :placeholder="minPrice"
             name="min-price"
             v-model.number="currentPriceFrom"
           />
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" v-model.number="currentPriceTo" />
+          <input
+            class="form__input"
+            type="text"
+            :placeholder="maxPrice"
+            name="max-price"
+            v-model.number="currentPriceTo"
+          />
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -51,7 +58,12 @@
                 :value="color.id"
                 v-model.number="currentColorId"
               />
-              <span class="colors__value" :style="{ 'background-color': color.color }"> </span>
+              <span
+                class="colors__value"
+                :title="color.title"
+                :style="{ 'background-color': color.code }"
+              >
+              </span>
             </label>
           </li>
         </ul>
@@ -132,26 +144,37 @@
 </template>
 
 <script>
-import categories from '@/data/categories';
-import colors from '@/data/colors';
-import products from '@/data/products';
+import axios from 'axios';
+import BASE_PRODUCT_URL from '@/data/config';
 
 export default {
-  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId', 'dd'],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
   data() {
     return {
-      currentPriceFrom: 0,
-      currentPriceTo: 0,
+      currentPriceFrom: null,
+      currentPriceTo: null,
       currentCategotyId: 0,
       currentColorId: 0,
+
+      categoriesData: null,
+      colorsData: null,
+      productData: null,
     };
   },
   computed: {
     categories() {
-      return categories;
+      return this.categoriesData ? this.categoriesData.items : [];
     },
     colors() {
-      return colors;
+      return this.colorsData ? this.colorsData.items : [];
+    },
+    maxPrice() {
+      const prices = this.productData.items.map((prod) => prod.price);
+      return Math.max(...prices);
+    },
+    minPrice() {
+      const prices = this.productData.items.map((prod) => prod.price);
+      return Math.min(...prices);
     },
   },
   watch: {
@@ -181,14 +204,26 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
     },
-    maxPrice() {
-      const prices = products.map((prod) => prod.price);
-      return Math.max(...prices);
+    loadProductData() {
+      axios.get(`${BASE_PRODUCT_URL}/api/products`).then((response) => {
+        this.productData = response.data;
+      });
     },
-    minPrice() {
-      const prices = products.map((prod) => prod.price);
-      return Math.min(...prices);
+    loadCategoriesData() {
+      axios.get(`${BASE_PRODUCT_URL}/api/productCategories`).then((response) => {
+        this.categoriesData = response.data;
+      });
     },
+    loadColorsData() {
+      axios.get(`${BASE_PRODUCT_URL}/api/colors`).then((response) => {
+        this.colorsData = response.data;
+      });
+    },
+  },
+  created() {
+    this.loadCategoriesData();
+    this.loadColorsData();
+    this.loadProductData();
   },
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <router-link class="header__cart" :to="{ name: 'cart' }" aria-label="Корзина с товарами">
+  <SpinnerLoading v-if="$store.state.cartProductLoading" />
+  <router-link v-else class="header__cart" :to="{ name: 'cart' }" aria-label="Корзина с товарами">
     <svg width="30" height="21" fill="currentColor">
       <use xlink:href="#icon-cart"></use>
     </svg>
@@ -9,5 +10,7 @@
   </router-link>
 </template>
 <script>
-export default {};
+import SpinnerLoading from './SpinnerLoading.vue';
+
+export default { components: { SpinnerLoading } };
 </script>

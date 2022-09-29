@@ -1,7 +1,13 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
-  <main class="content container">
+  <PreLoader v-if="productLoading" />
+  <ErrorLoading
+    v-else-if="productLoadingError"
+    :message="errorMessage"
+    :buttonAction="productDataLoading"
+  />
+  <main v-else-if="productData" class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -21,7 +27,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.img" :alt="product.title" />
+          <img width="570" height="570" :src="product.image.file.url" :alt="product.title" />
         </div>
       </div>
 
@@ -35,19 +41,16 @@
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
               <ul class="colors">
-                <li class="colors__item" v-for="color in product.colorId" :key="color">
+                <li class="colors__item" v-for="color in productData.colors" :key="color.id">
                   <label class="colors__label">
                     <input
                       class="colors__radio sr-only"
                       type="radio"
                       name="color-item"
-                      :value="color"
+                      :value="color.id"
+                      v-model="currentColorId"
                     />
-                    <span
-                      class="colors__value"
-                      :style="{ 'background-color': colors[+color - 1].color }"
-                    >
-                    </span>
+                    <span class="colors__value" :style="{ 'background-color': color.code }"> </span>
                   </label>
                 </li>
               </ul>
@@ -109,8 +112,16 @@
                 </button>
               </div>
 
-              <button class="button button--primery" type="submit">В корзину</button>
+              <button
+                class="button button--primery"
+                style="display: flex; justify-content: center"
+                type="submit"
+              >
+                <span v-show="!productAdding">В корзину </span
+                ><SpinnerLoading v-show="productAdding" />
+              </button>
             </div>
+            <div v-show="productAdded" style="padding-top: 10px">Товар добавлен в корзину</div>
           </form>
         </div>
       </div>
@@ -172,35 +183,52 @@
   </main>
 </template>
 <script>
-import products from '@/data/products';
-import categories from '@/data/categories';
 import formatNumber from '@/helpers/formatNumber';
-import colors from '@/data/colors';
+import axios from 'axios';
+import BASE_PRODUCT_URL from '@/data/config';
+import PreLoader from '@/components/PreLoader.vue';
+import ErrorLoading from '@/components/ErrorLoading.vue';
+import { mapActions } from 'vuex';
+import SpinnerLoading from '@/components/SpinnerLoading.vue';
 
 export default {
   data() {
-    return { productAmount: 1, color: '#73B6EA' };
+    return {
+      productAmount: 1,
+      currentColorId: 1,
+      productData: null,
+      productLoading: false,
+      productLoadingError: false,
+      errorMessage: '',
+
+      productAdded: false,
+      productAdding: false,
+    };
   },
+  components: { PreLoader, ErrorLoading, SpinnerLoading },
   computed: {
-    colors() {
-      return colors;
-    },
     product() {
-      return products.find((product) => product.id === +this.$route.params.id);
+      return this.productData;
     },
     category() {
-      return categories.find((category) => category.id === this.product.categoriesId);
+      return this.productData.category;
     },
   },
+
   filters: {
     formatNumber,
   },
   methods: {
+    ...mapActions(['addToCartProducts']),
     addToCart() {
-      this.$store.commit('addToCartProducts', {
-        productId: this.product.id,
-        amount: this.productAmount,
-      });
+      this.productAdding = true;
+      this.productAdded = false;
+      this.addToCartProducts({ productId: this.product.id, amount: this.productAmount }).then(
+        () => {
+          this.productAdding = false;
+          this.productAdded = true;
+        }
+      );
     },
     incrementProductAmount() {
       this.productAmount += 1;
@@ -210,6 +238,30 @@ export default {
         return;
       }
       this.productAmount -= 1;
+    },
+    productDataLoading() {
+      this.productLoading = true;
+      this.productLoadingError = false;
+      axios
+        .get(`${BASE_PRODUCT_URL}/api/products/${this.$route.params.id}`)
+        .then((response) => {
+          this.productData = response.data;
+        })
+        .catch(() => {
+          this.productLoadingError = true;
+          this.errorMessage = 'Извините,не удалось загрузить товар';
+        })
+        .finally(() => {
+          this.productLoading = false;
+        });
+    },
+  },
+  watch: {
+    '$route.params.id': {
+      handler() {
+        this.productDataLoading();
+      },
+      immediate: true,
     },
   },
 };

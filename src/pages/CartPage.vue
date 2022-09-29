@@ -1,10 +1,16 @@
 <!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
-  <main class="content container">
+  <PreLoader v-if="$store.state.cartProductLoading" />
+  <ErrorLoading
+    v-else-if="$store.state.cartProductLoadingError"
+    message="Не удалось загрузить корзину товаров"
+    :buttonAction="loadCartData"
+  />
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html"> Каталог </a>
+          <router-link class="breadcrumbs__link" :to="{ name: 'main' }"> Каталог </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link"> Корзина </a>
@@ -38,8 +44,10 @@
 
 <script>
 import formatNumber from '@/helpers/formatNumber';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import CartProduct from '@/components/CartProduct.vue';
+import PreLoader from '@/components/PreLoader.vue';
+import ErrorLoading from '@/components/ErrorLoading.vue';
 
 export default {
   filters: {
@@ -52,6 +60,9 @@ export default {
       totalAmount: 'totalAmount',
     }),
   },
-  components: { CartProduct },
+  components: { CartProduct, PreLoader, ErrorLoading },
+  methods: {
+    ...mapActions(['loadCartData']),
+  },
 };
 </script>

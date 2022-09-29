@@ -30,7 +30,7 @@
       class="product__del button-del"
       type="button"
       aria-label="Удалить товар из корзины"
-      @click.prevent="deleteProduct(item.productId)"
+      @click.prevent="deleteCartProduct"
     >
       <svg width="20" height="20" fill="currentColor">
         <use xlink:href="#icon-close"></use>
@@ -40,7 +40,7 @@
 </template>
 <script>
 import formatNumber from '@/helpers/formatNumber';
-import { mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   props: ['item'],
@@ -53,12 +53,18 @@ export default {
         return this.item.amount;
       },
       set(value) {
-        this.$store.commit('updateCartAmout', { productId: this.item.productId, amount: value });
+        this.$store.dispatch('updateCartProductsAmount', {
+          productId: this.item.productId,
+          amount: value,
+        });
       },
     },
   },
   methods: {
-    ...mapMutations({ deleteProduct: 'deleteCartProduct' }),
+    ...mapActions(['deleteProduct']),
+    deleteCartProduct() {
+      this.deleteProduct({ productId: this.item.productId });
+    },
     incrementProductAmount() {
       this.amount += 1;
     },
