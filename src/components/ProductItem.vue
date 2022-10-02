@@ -7,7 +7,9 @@
     </router-link>
 
     <h3 class="catalog__title">
-      <a href="#"> {{ product.title }} </a>
+      <router-link :to="{ name: 'product', params: { id: product.id } }">
+        {{ product.title }}
+      </router-link>
     </h3>
 
     <span class="catalog__price"> {{ product.price | formatNumber }} ₽ </span>
