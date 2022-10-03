@@ -9,7 +9,7 @@
           <router-link class="breadcrumbs__link" :to="{ name: 'cart' }"> Корзина </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <router-link class="breadcrumbs__link"> Оформление заказа </router-link>
+          <a class="breadcrumbs__link"> Оформление заказа </a>
         </li>
       </ul>
 
@@ -63,7 +63,7 @@
           <div class="cart__total">
             <p>Доставка: <b>500 ₽</b></p>
             <p>
-              Итого: <b>{{ getAmount }}</b> товара на сумму
+              Итого: <b>{{ totalAmountOrder }}</b> товара на сумму
               <b>{{ orderInfo.totalPrice | formatNumber }} ₽</b>
             </p>
           </div>
@@ -74,6 +74,7 @@
 </template>
 <script>
 import formatNumber from '@/helpers/formatNumber';
+import { mapGetters } from 'vuex';
 
 export default {
   filters: { formatNumber },
@@ -81,13 +82,9 @@ export default {
     orderInfo() {
       return this.$store.state.orderInfoData;
     },
-    getAmount() {
-      let amount = 0;
-      this.$store.state.orderInfoData.basket.items.forEach((prod) => {
-        amount += prod.quantity;
-      });
-      return amount;
-    },
+    ...mapGetters({
+      totalAmountOrder: 'totalAmountInOrder',
+    }),
   },
   created() {
     if (
