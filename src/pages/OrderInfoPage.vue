@@ -79,11 +79,9 @@ import { mapGetters } from 'vuex';
 export default {
   filters: { formatNumber },
   computed: {
-    orderInfo() {
-      return this.$store.state.orderInfoData;
-    },
     ...mapGetters({
       totalAmountOrder: 'totalAmountInOrder',
+      orderInfo: 'orderProductDetail',
     }),
   },
   created() {

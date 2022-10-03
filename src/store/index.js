@@ -63,6 +63,9 @@ export default new Vuex.Store({
     totalAmount(state, getters) {
       return getters.cartProductDetail.reduce((acc, prod) => prod.amount + acc, 0);
     },
+    orderProductDetail(state) {
+      return state.orderInfoData;
+    },
 
     totalAmountInOrder(state) {
       return state.orderInfoData.basket.items.reduce((acc, prod) => prod.quantity + acc, 0);
